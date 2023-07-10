@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador actividades ludificadas</title>
+	<link rel="icon" type="image/x-icon" href="img/logo.ico">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+		<div class="row align-items-center mt-3">
+            <div class="form-group col-sm-3 center">
+				<div class="logo">
+					<img src="img/logo.ico" />
+				</div>
+			</div>
+			<div class="form-group col-sm-9 text-center text-sm-left">
+				<h1>Generador de actividades ludificadas</h1>
+			</div>
+		</div>
+        <form id="myForm">
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label for="curso">Curso:</label>
+                    <select class="form-control" id="curso" name="curso" onchange="cambiaEnlace()">
+                        <option value="Primero de ESO">Primero de ESO</option>
+                        <option value="Segundo de ESO">Segundo de ESO</option>
+                        <option value="Tercero de ESO">Tercero de ESO</option>
+                        <option value="Cuarto de ESO">Cuarto de ESO</option>
+                        <option value="Primero de Bachillerato">Primero de Bachillerato</option>
+                        <option value="Segundo de Bachillerato">Segundo de Bachillerato</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label for="asignatura">Nombre de asignatura (haz click dos veces para ver la lista
+                        disponible):</label>
+                    <input type="text" class="form-control" id="asignatura" name="asignatura" list="listaAsignaturas">
+                    <datalist id="listaAsignaturas">
+                    </datalist>
+                </div>
+            </div>
+            <div id="contenedorEnlace" class="row">
+                <div class="form-group col-sm-12">
+                    <label id="enlaceCurso"></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-4">
+                    <label for="competenciaEspecifica">Competencia específica:</label>
+                    <textarea class="form-control" id="competenciaEspecifica" rows="6" required></textarea>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label for="competenciaEspecifica">Criterios de evaluación:</label>
+                    <textarea class="form-control" id="criteriosEvaluacion" rows="6" required></textarea>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label for="saberBasico">Saber básico:</label>
+                    <textarea class="form-control" id="saberBasico" rows="6" required></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label for="juego">Tipo de juego (haz click dos veces para ver la lista disponible):</label>
+                    <input id="juegoText" type="text" class="form-control" list="juego" />
+                    <datalist id="juego">
+                        <option value="Cartas"></option>
+                        <option value="Tablero"></option>
+                        <option value="Mapa"></option>
+                        <option value="Tarjetas"></option>
+                        <option value="Rol"></option>
+                        <option value="Escape room"></option>
+                        <option value="Preguntas y respuestas"></option>
+                    </datalist>
+                </div>
+                <div class="form-group form-check col-sm-6">
+                    <label>Uso de TICs:</label>
+                    <div class="form">
+                        <input type="checkbox" class="form-check-input" id="tics" name="tics">
+                        <label class="form-check-label" for="tics">Forzar uso de TICs</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <label for="parametros">Parámetros adicionales:</label>
+                    <textarea class="form-control" id="parametros" name="parametros" rows="3"></textarea>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="generar()">Generar</button>
+            <button type="button" class="btn btn-secondary" onclick="reiniciar()">Reiniciar</button>
+        </form>
+        <div id="resultados" class="hidden">
+            <hr>
+            <h1>Resultados a trasladar a ChatGPT</h1>
+            <div class="row align-items-center">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoPlanteamiento">Consulta planteamiento actividad:</label>
+                    <textarea class="form-control" id="resultadoPlanteamiento" name="resultadoPlanteamiento"
+                        rows="5"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary"
+                        onclick="copyToClipboard('resultadoPlanteamiento')">Copiar</button>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoMetodologia">Consulta metodología:</label>
+                    <textarea class="form-control" id="resultadoMetodologia" name="resultadoMetodologia"
+                        rows="2"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary"
+                        onclick="copyToClipboard('resultadoMetodologia')">Copiar</button>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoRecursos">Consulta recursos necesarios:</label>
+                    <textarea class="form-control" id="resultadoRecursos" name="resultadoRecursos" rows="2"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary"
+                        onclick="copyToClipboard('resultadoRecursos')">Copiar</button>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoAgrupamiento">Consulta agrupamiento alumnos:</label>
+                    <textarea class="form-control" id="resultadoAgrupamiento" name="resultadoAgrupamiento"
+                        rows="2"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary align-middle"
+                        onclick="copyToClipboard('resultadoAgrupamiento')">Copiar</button>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoTemporalizacion">Consulta temporalización:</label>
+                    <textarea class="form-control" id="resultadoTemporalizacion" name="resultadoTemporalizacion"
+                        rows="2"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary"
+                        onclick="copyToClipboard('resultadoTemporalizacion')">Copiar</button>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoDiversidad">Consulta atención a la diversidad:</label>
+                    <textarea class="form-control" id="resultadoDiversidad" name="resultadoDiversidad" rows="2"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary"
+                        onclick="copyToClipboard('resultadoDiversidad')">Copiar</button>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoEvaluacion">Consulta ejemplo de evaluación:</label>
+                    <textarea class="form-control" id="resultadoEvaluacion" name="resultadoEvaluacion" rows="2"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary"
+                        onclick="copyToClipboard('resultadoEvaluacion')">Copiar</button>
+                </div>
+            </div>
+            <div id="consultaParametros" class="row align-items-center hidden">
+                <div class="form-group col-sm-10">
+                    <label for="resultadoParametros">Consulta parámetros adicionales:</label>
+                    <textarea class="form-control" id="resultadoParametros" name="resultadoParametros" rows="2"></textarea>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="button" class="btn btn-primary"
+                        onclick="copyToClipboard('resultadoParametros')">Copiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function cambiaEnlace() {
+            const curso = document.getElementById("curso").value;
+            const enlaceCurso = document.getElementById("enlaceCurso");
+            const contenedorEnlace = document.getElementById("contenedorEnlace");
+            const asignatura = document.getElementById("asignatura");
+            const urlESO = 'https://educagob.educacionyfp.gob.es/curriculo/curriculo-lomloe/menu-curriculos-basicos/ed-secundaria-obligatoria.html';
+            const urlBachillerato = 'https://educagob.educacionyfp.gob.es/curriculo/curriculo-lomloe/menu-curriculos-basicos/bachillerato.html';
+            let asignaturas = [];
+
+            if (curso.includes("ESO")) {
+                contenedorEnlace.style.display = "block";
+                enlaceCurso.innerHTML = '<a href="' + urlESO + '" target="_blank">Consulta aquí los elementos curriculares correspondientes a la ESO</a>';
+                asignaturas = ['Biología y Geología', 'Digitalización', 'Economía y Emprendimiento', 'Educación Física', 'Educación Plástica, Visual y Audiovisual', 'Educación en Valores Cívicos y Éticos', 'Enseñanzas de religión', 'Expresión Artística', 'Física y Química', 'Formación y Orientación Personal y Profesional', 'Geografía e Historia', 'Latín', 'Lengua Castellana y Literatura', 'Lengua Extranjera', 'Matemáticas', 'Música', 'Tecnología', 'Tecnología y Digitalización'];
+            } else if (curso.includes("Bachillerato")) {
+                contenedorEnlace.style.display = "block";
+                enlaceCurso.innerHTML = '<a href="' + urlBachillerato + '" target="_blank">Consulta aquí los elementos curriculares correspondientes a Bachillerato</a>';
+                asignaturas = ['Análisis Musical I y II', 'Artes Escénicas I y II', 'Biología', 'Ciencias Generales', 'Coro y Técnica Vocal I y II', 'Cultura Audiovisual', 'Dibujo Artístico I y II', 'Dibujo Técnico Aplicado a las Artes Plásticas y al II', 'Dibujo Técnico I y II', 'Diseño', 'Economía', 'Educación Física', 'Emprendimiento y Actividad Empresarial', 'Empresa y Diseño de Modelos de Negocio', 'Enseñanzas de religión', 'Filosofía', 'Física y Química', 'Física', 'Fundamentos Artísticos', 'Geografía', 'Geología y Ciencias Ambientales', 'Griego I y II', 'Historia de España', 'Historia de la Filosofía', 'Historia de la Música y la Danza', 'Historia del Arte', 'Historia del Mundo Contemporáneo', 'Latín I y II', 'Lengua Castellana y Literatura I y II', 'Lengua Extranjera I y II', 'Lenguaje y Práctica Musical', 'Literatura Dramática', 'Literatura Universal', 'Matemáticas Aplicadas a las CCSS I y II', 'Matemáticas Aplicadas a las CCSS II', 'Matemáticas Generales', 'Matemáticas I y II', 'Movimientos Culturales y Artísticos', 'Proyectos Artísticos', 'Química', 'Técnicas de expresión Gráfico-plástica', 'Tecnología e Ingeniería I y II', 'Volumen'];
+            } else {
+                contenedorEnlace.style.display = "none";
+            }
+
+            const list = document.getElementById('listaAsignaturas');
+            list.innerHTML = "";
+            asignaturas.forEach(function (item) {
+                var option = document.createElement('option');
+                option.value = item;
+                list.appendChild(option);
+            });
+        }
+
+        window.onload = cambiaEnlace();
+
+        function generar() {
+            const asignatura = document.getElementById("asignatura").value.toLowerCase();
+            const curso = document.getElementById("curso").value.toLowerCase();
+            const juego = document.getElementById("juegoText").value.toLowerCase();
+            const competenciaEspecifica = document.getElementById("competenciaEspecifica").value.toLowerCase();
+            const criteriosEvaluacion = document.getElementById("criteriosEvaluacion").value.toLowerCase();
+            const saberBasico = document.getElementById("saberBasico").value.toLowerCase();
+            const parametros = document.getElementById("parametros").value.toLowerCase();
+            const tics = document.getElementById("tics").checked;
+            const ticsText = tics ? "con el uso de TICs" : "sin el uso de TICs";
+
+            const resultadoPlanteamiento = 'Propón una actividad ludificada de tipo ' + juego + ', ' + ticsText + ', \
+para la asignatura de ' + asignatura + ', orientada al curso ' + curso + ', para \
+aprender a ' + competenciaEspecifica + ' y que se oriente al saber básico \
+' + saberBasico + '.';
+            const resultadoMetodologia = 'Especifica la metodología para realizar la actividad.';
+            const resultadoRecursos = 'Especifica los recursos necesarios para realizar la actividad.';
+            const resultadoAgrupamiento = 'Especifica cómo agrupar los alumnos para realizar la actividad.';
+            const resultadoTemporalizacion = 'Especifica cómo temporalizar la actividad.';
+            const resultadoDiversidad = 'Especifica cómo desarrollar la actividad atendiendo a la diversidad.';
+            let resultadoEvaluacion = 'Especifica cómo evaluar la actividad.';
+            if ("" != criteriosEvaluacion) {
+                resultadoEvaluacion = 'Especifica cómo evaluar la actividad de acuerdo a los siguientes criterios:\n' + criteriosEvaluacion;
+            }
+
+            document.getElementById("resultadoPlanteamiento").value = resultadoPlanteamiento;
+            document.getElementById("resultadoMetodologia").value = resultadoMetodologia;
+            document.getElementById("resultadoRecursos").value = resultadoRecursos;
+            document.getElementById("resultadoAgrupamiento").value = resultadoAgrupamiento;
+            document.getElementById("resultadoTemporalizacion").value = resultadoTemporalizacion;
+            document.getElementById("resultadoDiversidad").value = resultadoDiversidad;
+            document.getElementById("resultadoEvaluacion").value = resultadoEvaluacion;
+            document.getElementById("resultadoParametros").value = parametros;
+
+            if ("" != parametros) {
+                document.getElementById("consultaParametros").style.display = "flex";
+            } else {
+                document.getElementById("consultaParametros").style.display = "none";
+            }
+
+			const resultados = document.getElementById("resultados");
+            resultados.style.display = "block";
+			
+			resultados.scrollIntoView({behavior: 'smooth'}, true);
+        }
+
+        function reiniciar() {
+            document.getElementById("resultados").style.display = "none";
+            document.getElementById("myForm").reset();
+            document.getElementById("resultado1").value = "";
+        }
+
+        function copyToClipboard(elementId) {
+            var input = document.getElementById(elementId);
+            input.select();
+            input.setSelectionRange(0, 99999); // Para dispositivos móviles
+
+            document.execCommand("copy");
+        }
+    </script>
+    <style>
+        /* Estilos generales */
+        body {
+            background-color: #212529;
+            color: #fff;
+        }
+
+        hr {
+            background-color: gray;
+        }
+
+        /* Estilos para la barra de navegación */
+        .navbar {
+            background-color: #343a40;
+        }
+
+        .navbar-brand {
+            color: #fff;
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff;
+        }
+
+        /* Estilos para los botones */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        /* Estilos para las tarjetas */
+        .card {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .card-header {
+            background-color: #212529;
+            color: #fff;
+        }
+
+        .card-body {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        /* Estilos para las tablas */
+        .table {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .table th {
+            background-color: #212529;
+            color: #fff;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Estilos para los formularios */
+        .form-control {
+            background-color: #343a40;
+            color: #fff;
+            border-color: #343a40;
+        }
+
+        .form-control:focus {
+            background-color: #343a40;
+            color: #fff;
+            border-color: #6c757d;
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+        }
+
+        /* Estilos para las alertas */
+        .alert {
+            color: #fff;
+        }
+
+        .alert-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .alert-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .hidden{
+            display: none;
+        }
+		@keyframes logo {
+			from {
+				transform: rotateY(90deg);
+			}
+			to {
+				transform: rotateY(0deg);
+			}
+		}
+		.logo {
+		    background-color: white;
+			border-radius: 50px;
+			padding: 20px;
+			width: fit-content;
+			margin: 0 auto;
+			animation: logo 1.5s;
+			animation-timing-function: ease-out;
+		}
+		.logo img {
+			height: 50px
+		}
+    </style>
+</body>
+
+</html>
